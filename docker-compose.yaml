@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: grocery-be
+    environment:
+      POSTGRES_DB: grocery-be
+      POSTGRES_USER: grocery-be
+      POSTGRES_PASSWORD: 123456789
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
