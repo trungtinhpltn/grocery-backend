@@ -27,7 +27,7 @@ public class DataInitializer implements CommandLineRunner {
             admin.setRole(Role.ROLE_ADMIN);
             admin.setIsActive(true);
             userRepository.save(admin);
-            System.out.println("\t--[Khởi tạo]: tài khoản spadmin");
+            System.out.println("\t--[System]: Created account superadmin success!");
         }
     }
 }
