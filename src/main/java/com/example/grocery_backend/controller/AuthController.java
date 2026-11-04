@@ -1,11 +1,10 @@
 package com.example.grocery_backend.controller;
 
 
-import com.example.grocery_backend.requestdto.LoginRequest;
-import com.example.grocery_backend.responsedto.LoginResponse;
+import com.example.grocery_backend.dto.LoginRequest;
+import com.example.grocery_backend.dto.LoginResponse;
 import com.example.grocery_backend.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
+    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest);
     }
 }

@@ -1,11 +1,15 @@
 package com.example.grocery_backend.controller;
 
+import com.example.grocery_backend.dto.CategoryRequest;
 import com.example.grocery_backend.entity.Category;
-import com.example.grocery_backend.requestdto.CategoryRequest;
 import com.example.grocery_backend.service.CategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +30,13 @@ public class CategoryController {
     }
 
     @GetMapping
-    public Page<Category> findAll(Pageable pageable) {
+    public Page<Category> findAll(@ParameterObject
+                                  @PageableDefault(page = 1, size = 10)
+                                  @SortDefault.SortDefaults({
+                                          @SortDefault(sort = "name", direction = Sort.Direction.ASC),
+                                          @SortDefault(sort = "id", direction = Sort.Direction.DESC)
+                                  })
+                                  Pageable pageable) {
         return categoryService.getCategory(pageable);
     }
 

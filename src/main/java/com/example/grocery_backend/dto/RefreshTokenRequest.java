@@ -1,4 +1,4 @@
-package com.example.grocery_backend.requestdto;
+package com.example.grocery_backend.dto;
 
 import lombok.Data;
 

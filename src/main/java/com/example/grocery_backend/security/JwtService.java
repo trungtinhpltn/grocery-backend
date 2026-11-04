@@ -5,25 +5,32 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
 @Component
-public class JwtTokenProvider {
-    private final String JWT_SECRET = "GroceryTHPAppsecretKeyForJwtMTTMNPLTTH";
-    private final long JWT_EXPIRATION = 360000L;
-    private final long REFRESH_TOKEN_EXPIRATION = 604800000L;
+public class JwtService {
+    private final Key key;
+    private final long JWT_EXPIRATION;
+    private final long REFRESH_TOKEN_EXPIRATION;
 
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(JWT_SECRET.getBytes());
+    public JwtService(@Value("${app.jwt.secret}") String secret,
+                      @Value("${app.jwt.expiration-ms}") long expiration,
+                      @Value("${app.jwt.refresh_token_expiration-ms}") long rfExpiration) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.JWT_EXPIRATION = expiration;
+        this.REFRESH_TOKEN_EXPIRATION = rfExpiration;
     }
+
 
     public String generateToken(String username) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
-        return Jwts.builder().setSubject(username).setIssuedAt(now).setExpiration(expiryDate).signWith(getSigningKey(),
+        return Jwts.builder().setSubject(username).setIssuedAt(now).setExpiration(expiryDate).signWith(key,
                 SignatureAlgorithm.HS256).compact();
     }
 
@@ -34,27 +41,23 @@ public class JwtTokenProvider {
                 .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith((getSigningKey()), SignatureAlgorithm.HS256)
+                .signWith((key), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String getUsernameFromJWT(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+    private Claims parse(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.getSubject();
     }
 
-    public boolean validateToken(String token) {
+    public String extractUsernameIfValid(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(getSigningKey())
-                    .build().parseClaimsJws(token);
-            return true;
+            return parse(token).getSubject();
         } catch (JwtException | IllegalArgumentException e) {
-            System.err.println("JWT is invalid: " + e.getMessage());
-            return false;
+            return null;
         }
     }
 }

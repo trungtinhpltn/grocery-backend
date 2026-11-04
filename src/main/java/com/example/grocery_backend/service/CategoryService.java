@@ -1,8 +1,8 @@
 package com.example.grocery_backend.service;
 
+import com.example.grocery_backend.dto.CategoryRequest;
 import com.example.grocery_backend.entity.Category;
 import com.example.grocery_backend.repository.CategoryRepository;
-import com.example.grocery_backend.requestdto.CategoryRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
